@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Stack;
 
 public class MyCalculator extends JFrame {
 
@@ -54,7 +55,8 @@ public class MyCalculator extends JFrame {
 	private ArrayList<String> li = new ArrayList<String>();
 	private ArrayList<String> lo = new ArrayList<String>(); //입력값 저장
 	private ArrayList<String> vo = new ArrayList<String>(); //연산식 저장
-
+	private String temp = null;
+	private Stack<String> stack = new Stack<String>(); 
 	private class PadInput implements ActionListener {
 
 		public void actionPerformed(ActionEvent event) {
@@ -63,7 +65,22 @@ public class MyCalculator extends JFrame {
 
 			if (Arrays.asList(names).contains(eventText) && eventText != "=") {
 				li.add(eventText);
-
+				stack.push(eventText);
+				String pla[] = { "+", "-", "*", "/", "="};
+				if (Arrays.asList(pla).contains(li.get(0))) {
+					li.remove(0);
+					
+				}
+			
+				if (Arrays.asList(pla).contains(eventText)) {
+					String temp = stack.pop();
+					if (Arrays.asList(pla).contains(stack.peek())) {
+						System.out.println("??");
+						li.remove(li.size()-1);
+					}else {
+						stack.push(temp);
+					}
+				}
 				output = li.get(0);
 
 				for (int i = 1; i < li.size(); i++) {
