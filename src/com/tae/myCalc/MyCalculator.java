@@ -12,9 +12,6 @@ import java.util.Iterator;
 
 public class MyCalculator extends JFrame {
 
-	private String chkInput;
-	private int numOne, sum, total, sosu;
-	private int count = 0, inputChk = 0;
 	private final String names[] = { "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "*", "0", ".", "=", "/" };
 	private JTextField inputText;
 	private String input;
@@ -77,8 +74,7 @@ public class MyCalculator extends JFrame {
 				inputText.setText(output);
 
 			} else if (eventText.equals("=")) {
-				ClearButton foroutp = new ClearButton();
-				foroutp.actionPerformed(event);
+				inputText.setText("");
 				li.toArray();
 				String[] arr = li.toArray(new String[li.size()]);
 				String str;
@@ -181,21 +177,11 @@ public class MyCalculator extends JFrame {
 			// 클리어 버튼 시 모든 계산식 함수 초기화
 			
 			inputText.setText("");
-			for (int i = 0; i < li.size(); i++) {
-				li.remove(0);
-			}
-			for (int i = 0; i < lo.size(); i++) {
-				lo.remove(0);
-			}
-			for (int i = 0; i < vo.size(); i++) {
-				vo.remove(0);
-			}
+			li.clear();
+			lo.clear();
+			vo.clear();
 			output = null;
-			numOne = 0;
-			total = 0;
-			sum = 0;
-			count = 0;
-			inputChk = 0;
+		
 		}
 	}
 
