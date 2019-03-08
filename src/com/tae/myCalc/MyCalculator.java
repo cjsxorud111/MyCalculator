@@ -52,153 +52,156 @@ public class MyCalculator extends JFrame {
 	}
 
 	private String output = null;
-	private ArrayList<String> li = new ArrayList<String>();
-	private ArrayList<String> lo = new ArrayList<String>(); //입력값 저장
-	private ArrayList<String> vo = new ArrayList<String>(); //연산식 저장
-	private String temp = null;
-	private Stack<String> stack = new Stack<String>(); 
+	private ArrayList<String> inputTextList = new ArrayList<String>(); //입력값 저장
+	private ArrayList<String> numberText = new ArrayList<String>(); //숫자 저장
+	private ArrayList<String> operatorText = new ArrayList<String>(); //연산식 저장
+	private String temp = null; //연산자 두개연속인지 확인위한 변수
+	private Stack<String> forCheckStack = new Stack<String>(); 
 	private class PadInput implements ActionListener {
 
 		public void actionPerformed(ActionEvent event) {
 
 			String eventText = event.getActionCommand();
 
-			if (Arrays.asList(names).contains(eventText) && eventText != "=") {
-				li.add(eventText);
-				stack.push(eventText);
-				String pla[] = { "+", "-", "*", "/", "="};
-				if (Arrays.asList(pla).contains(li.get(0))) {
-					li.remove(0);
-					
+			if (Arrays.asList(names).contains(eventText) && eventText != "=") { //일반 텍스트 입력시
+				inputTextList.add(eventText); //기본 입력값 저장
+				forCheckStack.push(eventText); //연산자 연속입력 확인위해 입력받는대로 연속해서 넣어줌
+				String forCheckOperator[] = { "+", "-", "*", "/", "="};  //연산자 연속입력 확인위한 배열
+			
+				//첫문자로 연산자 입력시 삭제
+				if (Arrays.asList(forCheckOperator).contains(inputTextList.get(0))) {
+					inputTextList.remove(0); 
+				}
+				
+				//스택에서 하나빼고 남은게 연산자면 그대로 아니면 뺀걸다시추가
+				if (Arrays.asList(forCheckOperator).contains(eventText)) {
+					String temp = forCheckStack.pop();
+					if (Arrays.asList(forCheckOperator).contains(forCheckStack.peek())) {
+						inputTextList.remove(inputTextList.size()-1);
+					}else {
+						forCheckStack.push(temp);
+					}
 				}
 			
-				if (Arrays.asList(pla).contains(eventText)) {
-					String temp = stack.pop();
-					if (Arrays.asList(pla).contains(stack.peek())) {
-						System.out.println("??");
-						li.remove(li.size()-1);
-					}else {
-						stack.push(temp);
-					}
+				output = inputTextList.get(0); 
+				
+				//출력위한 문자열 만듦
+				for (int i = 1; i < inputTextList.size(); i++) {
+					output = output + inputTextList.get(i);
 				}
-				output = li.get(0);
-
-				for (int i = 1; i < li.size(); i++) {
-					output = output + li.get(i);
-				}
+				
 				System.out.println(output);
-
+				//입력값 출력
 				inputText.setText(output);
 
-			} else if (eventText.equals("=")) {
-				inputText.setText("");
-				li.toArray();
-				String[] arr = li.toArray(new String[li.size()]);
-				String str;
+			} else if (eventText.equals("=")) { //"="입력받았을때
+				inputText.setText(""); //우선 출력창을 비움
+				inputTextList.toArray(); 
+				String[] inputTextArray = inputTextList.toArray(new String[inputTextList.size()]); //inputTextList배열변환
 
-				System.out.println(Arrays.toString(arr));
+				System.out.println(Arrays.toString(inputTextArray));
 
 				int temp = 0;
-				for (int i = 0; i < arr.length; i++) {
-					if (arr[i] == "+" || arr[i] == "-" || arr[i] == "*" || arr[i] == "/" || arr[i] == ".") {
-						lo.add(output.substring(temp, i));
-						vo.add(arr[i]);
+				
+				//출력위한 문자열 만듦
+				for (int i = 0; i < inputTextArray.length; i++) {
+					if (inputTextArray[i] == "+" || inputTextArray[i] == "-" || inputTextArray[i] == "*" || inputTextArray[i] == "/" || inputTextArray[i] == ".") {
+						numberText.add(output.substring(temp, i));
+						operatorText.add(inputTextArray[i]); 
 						temp = i + 1;
-					} else if (i == arr.length - 1) {
-						String a = output.substring(temp, i + 1);
-						lo.add(a);
+					} else if (i == inputTextArray.length - 1) {
+						numberText.add(output.substring(temp, i + 1));
 					}
 				}
 
-				System.out.println(lo.toString());
-				System.out.println(vo.toString());
-
-				for (int i = 0; i < vo.size(); i++) {
-					if (vo.get(i) == ".") {
-
-						String ss = lo.get(i) + "." + lo.get(i + 1);
-						double dd = Double.parseDouble(ss);
-						lo.remove(i);
-						lo.remove(i);
-						vo.remove(i);
-						lo.add(i, ss);
-						System.out.println(vo.toString());
-						System.out.println(lo.toString());
-					}
-				}
-				int[] tempp = new int[vo.size()];
-				int aa = 0;
-				for (int i = 0; i < vo.size(); i++) {
-					if (vo.get(i) == "*") {
-						tempp[i] = 1;
-						Double dd = Double.parseDouble(lo.get(i - aa)) * Double.parseDouble(lo.get(i - aa + 1));
-						System.out.println(dd);
-
-						lo.remove(i - aa);
-						lo.remove(i - aa);
-						System.out.println(aa);
-						String ddd = Double.toString(dd);
-
-						lo.add(i - aa, ddd);
-						System.out.println(vo.toString());
-						System.out.println(lo.toString());
-						aa = aa + 1;
-					} else if (vo.get(i) == "/") {
-						tempp[i] = 1;
-						Double dd = Double.parseDouble(lo.get(i - aa)) / Double.parseDouble(lo.get(i - aa + 1));
-						System.out.println(dd);
-
-						lo.remove(i - aa);
-						lo.remove(i - aa);
-						System.out.println(aa);
-						String ddd = Double.toString(dd);
-
-						lo.add(i - aa, ddd);
-						System.out.println(vo.toString());
-						System.out.println(lo.toString());
-						aa = aa + 1;
-					}
-				}
-				int num = 0;
-				ArrayList<String> vov = new ArrayList<String>();
-				for (int i = 0; i < vo.size(); i++) {
-					if (vo.get(i) == "+" || vo.get(i) == "-") {
-						vov.add(lo.remove(0));
-						vov.add(vo.get(i));
-					}
-				}
-				vov.add(lo.remove(0));
-				double result = Double.parseDouble(vov.get(0));
-				for (int i = 0; i < vov.size(); i++) {
-					if (vov.get(i) == "+") {
-						result = result + Double.parseDouble(vov.get(i+1));
-					} else if (vov.get(i) == "-") {
-						result = result - Double.parseDouble(vov.get(i+1));
+				System.out.println(numberText.toString());
+				System.out.println(operatorText.toString());
+				//"."입력받았을때 소수점추가해 문자열만듦
+				for (int i = 0; i < operatorText.size(); i++) {
+					if (operatorText.get(i) == ".") {
+						String newAddDot = numberText.get(i) + "." + numberText.get(i + 1);
+						numberText.remove(i);
+						numberText.remove(i);
+						operatorText.remove(i);
+						numberText.add(i, newAddDot);
+						System.out.println(operatorText.toString());
+						System.out.println(numberText.toString());
 					}
 				}
 				
-				BigDecimal result2 = new BigDecimal(result);
+				int[] tempp = new int[operatorText.size()];
+				int index = 0;
+				//실제연산 연산자 만나면 연산자 앞숫자와 뒷숫자 연산후 연산자 앞숫자,연산자,연산자 뒷숫자 지우고 그자리에 넣음
+				for (int i = 0; i < operatorText.size(); i++) {
+					if (operatorText.get(i) == "*") {
+						tempp[i] = 1;
+						Double doubleText = Double.parseDouble(numberText.get(i - index)) * Double.parseDouble(numberText.get(i - index + 1));
+						System.out.println(doubleText);
+
+						numberText.remove(i - index);
+						numberText.remove(i - index);
+						System.out.println(index);
+						String dDouble = Double.toString(doubleText);
+
+						numberText.add(i - index, dDouble);
+						System.out.println(operatorText.toString());
+						System.out.println(numberText.toString());
+						index = index + 1;
+						
+					} else if (operatorText.get(i) == "/") {
+						tempp[i] = 1;
+						Double dd = Double.parseDouble(numberText.get(i - index)) / Double.parseDouble(numberText.get(i - index + 1));
+						System.out.println(dd);
+
+						numberText.remove(i - index);
+						numberText.remove(i - index);
+						System.out.println(index);
+						String ddd = Double.toString(dd);
+
+						numberText.add(i - index, ddd);
+						System.out.println(operatorText.toString());
+						System.out.println(numberText.toString());
+						index = index + 1;
+					}
+				}
+				int num = 0;
+				ArrayList<String> textTemp = new ArrayList<String>();
+				for (int i = 0; i < operatorText.size(); i++) {
+					if (operatorText.get(i) == "+" || operatorText.get(i) == "-") {
+						textTemp.add(numberText.remove(0));
+						textTemp.add(operatorText.get(i));
+					}
+				}
+				
+				textTemp.add(numberText.remove(0));
+				double result = Double.parseDouble(textTemp.get(0));
+				for (int i = 0; i < textTemp.size(); i++) {
+					if (textTemp.get(i) == "+") { //+연산
+						result = result + Double.parseDouble(textTemp.get(i+1));
+					} else if (textTemp.get(i) == "-") { //-연산
+						result = result - Double.parseDouble(textTemp.get(i+1));
+					}
+				}
+				
+				//소수점 체크후 결과출력  
 				if (result - (long)result == 0) {
 					inputText.setText(String.valueOf((long)result));
 				}else {
 					inputText.setText(String.valueOf(result));
 				}
-				
-				
 			}
 		}
 	}
-
+	
+	// 클리어 버튼 시 모든 입력값 초기화
 	private class ClearButton implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
-			// 클리어 버튼 시 모든 계산식 함수 초기화
 			
 			inputText.setText("");
-			li.clear();
-			lo.clear();
-			vo.clear();
+			inputTextList.clear();
+			numberText.clear();
+			operatorText.clear();
 			output = null;
-		
 		}
 	}
 
