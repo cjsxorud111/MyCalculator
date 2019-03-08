@@ -1,26 +1,28 @@
 package com.tae.myCalc;
 
-import javax.swing.*;
-
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.Stack;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class MyCalculator extends JFrame {
 
-	private final String names[] = { "7", "8", "9", "-", "4", "5", "6", "+", "1", "2", "3", "*", "0", ".", "=", "/" };
+	private final String names[] = { "7", "8", "9", "+", "4", "5", "6", "-", "1", "2", "3", "*", ".", "0", "=", "/" };
 	private JTextField inputText;
-	private String input;
 
 	public MyCalculator() {
 		super("계산기");
 
-		BorderLayout layout = new BorderLayout(2, 2);
+		BorderLayout layout = new BorderLayout();
 		setLayout(layout);
 
 		JPanel groupPanel = new JPanel(new BorderLayout(5, 3));
@@ -107,6 +109,7 @@ public class MyCalculator extends JFrame {
 				for (int i = 0; i < inputTextArray.length; i++) {
 					if (inputTextArray[i] == "+" || inputTextArray[i] == "-" || inputTextArray[i] == "*" || inputTextArray[i] == "/" || inputTextArray[i] == ".") {
 						numberText.add(output.substring(temp, i));
+						System.out.println(temp + "  " + i);
 						operatorText.add(inputTextArray[i]); 
 						temp = i + 1;
 					} else if (i == inputTextArray.length - 1) {
@@ -114,8 +117,8 @@ public class MyCalculator extends JFrame {
 					}
 				}
 
-				System.out.println(numberText.toString());
-				System.out.println(operatorText.toString());
+				System.out.println(numberText.toString()+"??1");
+				System.out.println(operatorText.toString()+"??2");
 				//"."입력받았을때 소수점추가해 문자열만듦
 				for (int i = 0; i < operatorText.size(); i++) {
 					if (operatorText.get(i) == ".") {
@@ -164,6 +167,7 @@ public class MyCalculator extends JFrame {
 						index = index + 1;
 					}
 				}
+				
 				int num = 0;
 				ArrayList<String> textTemp = new ArrayList<String>();
 				for (int i = 0; i < operatorText.size(); i++) {
@@ -183,11 +187,30 @@ public class MyCalculator extends JFrame {
 					}
 				}
 				
-				//소수점 체크후 결과출력  
+				//소수점 체크후 결과출력  + 결과에 다시 연산하기위한 초기화
 				if (result - (long)result == 0) {
 					inputText.setText(String.valueOf((long)result));
+					inputTextList.clear();
+					numberText.clear();
+					operatorText.clear();
+					output = null;
+					String reResult = String.valueOf((long)result);
+					String[] reesult = reResult.split("");
+			        for (String wo : reesult ){
+			        	inputTextList.add(wo);
+			        }
+					
 				}else {
 					inputText.setText(String.valueOf(result));
+					inputTextList.clear();
+					numberText.clear();
+					operatorText.clear();
+					output = null;
+					String reResult = String.valueOf(result);
+					String[] reesult = reResult.split("");
+			        for (String wo : reesult ){
+			        	inputTextList.add(wo);
+			        }
 				}
 			}
 		}
@@ -207,8 +230,8 @@ public class MyCalculator extends JFrame {
 
 	public static void main(String[] args) {
 		MyCalculator aa = new MyCalculator();
-		aa.setSize(210, 350);
-		aa.setResizable(true);
+		aa.setSize(280, 360);
+		aa.setResizable(false);
 		aa.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		aa.setVisible(true);
 	}
